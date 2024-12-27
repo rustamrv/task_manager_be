@@ -13,6 +13,20 @@ router.post(
     const { username, email, password } = req.body;
 
     try {
+      const existingUser = await User.findOne({
+        $or: [{ username }, { email }],
+      });
+
+      if (existingUser) {
+        res.status(400).json({
+          error:
+            existingUser.username === username
+              ? "Username already exists"
+              : "Email already exists",
+        });
+        return;
+      }
+
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({ username, email, password: hashedPassword });
       await newUser.save();
