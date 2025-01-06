@@ -47,9 +47,9 @@ router.get("/", authenticateToken, async (req: any, res: Response) => {
       "in-progress": [],
       "done": [],
     } as any;
-
+    
     tasks.forEach((task:any) => {
-      groupedTasks[task.status].push({
+      groupedTasks[task.status]?.push({
         id: task._id,
         title: task.title,
         description: task.description,
@@ -59,23 +59,8 @@ router.get("/", authenticateToken, async (req: any, res: Response) => {
       });
     });
  
-    const columnsInit = [
-      {
-        title: "To do",
-        tasks: groupedTasks["to-do"],
-      },
-      {
-        title: "In progress",
-        tasks: groupedTasks["in-progress"],
-      },
-      {
-        title: "Done",
-        tasks: groupedTasks["done"],
-      },
-    ];
-
-    res.status(200).json(columnsInit);
-  } catch (error) {
+    res.status(200).json(groupedTasks);
+  } catch (error) {     
     res.status(500).json({ error: "Error fetching tasks" });
   }
 });
@@ -91,7 +76,6 @@ router.put("/:id", authenticateToken, async (req: any, res: Response): Promise<a
      if (dueDate) updateFields.dueDate = dueDate; 
      if (status) updateFields.status = status; 
      if (assignee) updateFields.assignee = assignee; 
-
 
      const updatedTask = await Task.findByIdAndUpdate( 
         id, updateFields, 
