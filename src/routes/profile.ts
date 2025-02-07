@@ -10,6 +10,7 @@ router.get("/", authenticateToken, async (req: any, res: Response) : Promise<any
   try {    
     const user = await User.findById(req.user?.id).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
+
     if (user.profileImage) {
       const baseUrl = `${req.protocol}://${req.get("host")}`;
       user.profileImage = `${baseUrl}${user.profileImage}`;
